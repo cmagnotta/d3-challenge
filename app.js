@@ -28,13 +28,16 @@ var chartGroup = svg.append("g")
 
 d3.csv("data.csv").then(function(socialData) {
 
-  
   console.log(socialData);
 
   
   socialData.forEach(function(data) {
     data.poverty = +data.poverty;
     data.healthcare = +data.healthcare;
+
+
+//check out the hairdata solution.
+//https://nu.bootcampcontent.com/NU-Coding-Bootcamp/nu-chi-data-pt-09-2020-u-c/blob/master/16-D3/3/Activities/09-Stu_Hair_Metal/Solved/app.js
 
     var canvas_width = 500;
     var canvas_height = 200;
