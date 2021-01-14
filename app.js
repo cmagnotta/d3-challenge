@@ -1,11 +1,7 @@
-// Define SVG area dimensions
-//THIS LOOKS LIKE A GOOD START
-
-
 var svgWidth = 960;
 var svgHeight = 660;
 
-// Define the chart's margins as an object
+
 var chartMargin = {
   top: 30,
   right: 30,
@@ -13,11 +9,11 @@ var chartMargin = {
   left: 30
 };
 
-// Define dimensions of the chart area
+
 var chartWidth = svgWidth - chartMargin.left - chartMargin.right;
 var chartHeight = svgHeight - chartMargin.top - chartMargin.bottom;
 
-// Select body, append SVG area to it, and set the dimensions
+
 var svg = d3
   .select("body")
   .append("svg")
@@ -29,40 +25,91 @@ var svg = d3
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
-// Load data from hours-of-tv-watched.csv
+
 d3.csv("data.csv").then(function(socialData) {
 
-  // Print the tvData
+  
   console.log(socialData);
 
-  // Cast the hours value to a number for each piece of tvData
-  tvData.forEach(function(data) {
-    data.hours = +data.hours;
-  });
+  
+  socialData.forEach(function(data) {
+    data.poverty = +data.poverty;
+    data.healthcare = +data.healthcare;
 
-  var barSpacing = 10; // desired space between each bar
-  var scaleY = 10; // 10x scale on rect height
+    var canvas_width = 500;
+    var canvas_height = 200;
+    var padding = 25;
 
-// create axes
-var yAxis = d3.axisLeft(yScale);
-var xAxis = d3.axisBottom(xScale);
+    var xScale = d3.scaleLinear()
+                .domain([0, d3.max(data.poverty, function(d) {
+                    return d[0];  // get the input domain as first column of array
+                })])
+                .range([padding, canvas_width - padding * 2]) 
 
+    var yScale = d3.scaleLinear()
+                .domain([0, d3.max(data.healthcare, function(d) {
+                    return d[1];  // gets the input domain as the second column of array
+                })])
+                .range([canvas_height - padding, padding])  // set the output range
+                
 
+                svg.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                .attr("x", function(d) {
+                    return xScale(d[0]);  // Location of x
+                })
+                .attr("y", function(d) {
+                    return yScale(d[1]);  // Location of y
+                })
+                .attr("r", 4)  // Radius
+                .attr("cx", function(d) {
+                    return xScale(d[0]);  // Returns scaled circle x
+                })
+                .attr("cy", function(d) {
+                    return yScale(d[1]);  // Returns scaled circle y
+                });
+                svg.selectAll("text")
+                .data(data.abbr)
+                .enter()
+                .append("text")
+                .text(function(d) {
+                    return d[0] + "," + d[1];
+                })
+                .attr("x", function(d) {
+                    return xScale(d[0]);  // Returns scaled location of x
+                })
+                .attr("y", function(d) {
+                    return yScale(d[1]);  // Returns scaled circle y
+                })
+                .attr("font_family", "sans-serif")  // Font type
+                .attr("font-size", "11px")  // Font size
+                .attr("fill", "darkgreen");   // Font color
+              
+            
 
-  // Create a 'barWidth' variable so that the bar chart spans the entire chartWidth.
-  var barWidth = (chartWidth - (barSpacing * (tvData.length - 1))) / tvData.length;
+            // Define X axis and attach to graph
+            var xAxis = d3.axisBottom()  // Create an x axis
+                .scale(xScale)      // Scale x axis
+                
+                .ticks(10);  // Set rough # of ticks (optional)
 
-  // @TODO
-  // Create code to build the bar chart using the tvData.
-  chartGroup.selectAll(".bar")
-    .data(tvData)
-    .enter()
-    .append("rect")
-    .classed("bar", true)
-    .attr("width", d => barWidth)
-    .attr("height", d => d.hours * scaleY)
-    .attr("x", (d, i) => i * (barWidth + barSpacing))
-    .attr("y", d => chartHeight - d.hours * scaleY);
-}).catch(function(error) {
-  console.log(error);
+            svg.append("g")     // Append a group element (itself invisible, but helps 'group' elements)
+                .attr("class", "axis")  // Assign the 'axis' CSS
+                .attr("transform", "translate(0," + (canvas_height - padding) + ")")  // Place axis at bottom
+                .call(xAxis);  // Call function to create axis
+
+            // Define Y axis and attach to graph
+            var yAxis = d3.axisLeft()  // Create a y axis
+                .scale(yScale)  // Scale y axis
+                
+                .ticks(5);  // Set rough # of ticks (optional)
+
+            svg.append("g")
+                .attr("class", "axis")
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(yAxis);
+                
+  })
 });
