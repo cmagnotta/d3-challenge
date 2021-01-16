@@ -4,9 +4,9 @@ var svgHeight = 660;
 
 var chartMargin = {
   top: 30,
-  right: 30,
-  bottom: 30,
-  left: 30
+  right: 40,
+  bottom: 60,
+  left: 100
 };
 
 
@@ -14,8 +14,7 @@ var chartWidth = svgWidth - chartMargin.left - chartMargin.right;
 var chartHeight = svgHeight - chartMargin.top - chartMargin.bottom;
 
 
-var svg = d3
-  .select("body")
+var svg = d3.select(".scatter")
   .append("svg")
   .attr("height", svgHeight)
   .attr("width", svgWidth);
@@ -29,90 +28,71 @@ var chartGroup = svg.append("g")
 d3.csv("data.csv").then(function(socialData) {
 
   console.log(socialData);
-
   
   socialData.forEach(function(data) {
     data.poverty = +data.poverty;
     data.healthcare = +data.healthcare;
 
-
-//check out the hairdata solution.
-//https://nu.bootcampcontent.com/NU-Coding-Bootcamp/nu-chi-data-pt-09-2020-u-c/blob/master/16-D3/3/Activities/09-Stu_Hair_Metal/Solved/app.js
-
-    var canvas_width = 500;
-    var canvas_height = 200;
-    var padding = 25;
-
     var xScale = d3.scaleLinear()
-                .domain([0, d3.max(data.poverty, function(d) {
-                    return d[0];  // get the input domain as first column of array
-                })])
-                .range([padding, canvas_width - padding * 2]) 
+                .domain([20, d3.max(socialData, data => data.poverty)])
+                .range([0, chartWidth]) 
 
     var yScale = d3.scaleLinear()
-                .domain([0, d3.max(data.healthcare, function(d) {
-                    return d[1];  // gets the input domain as the second column of array
-                })])
-                .range([canvas_height - padding, padding])  // set the output range
-                
+                .domain([0, d3.max(socialData, data => data.healthcare)])
+                .range([chartHeight, 0]);
+    
+    var bottomAxis = d3.axisBottom(xScale);
+    var leftAxis = d3.axisLeft(yScale);
 
-                svg.selectAll("circle")
-                .data(data)
-                .enter()
-                .append("circle")
-                .attr("x", function(d) {
-                    return xScale(d[0]);  // Location of x
-                })
-                .attr("y", function(d) {
-                    return yScale(d[1]);  // Location of y
-                })
-                .attr("r", 4)  // Radius
-                .attr("cx", function(d) {
-                    return xScale(d[0]);  // Returns scaled circle x
-                })
-                .attr("cy", function(d) {
-                    return yScale(d[1]);  // Returns scaled circle y
-                });
-                svg.selectAll("text")
-                .data(data.abbr)
-                .enter()
-                .append("text")
-                .text(function(d) {
-                    return d[0] + "," + d[1];
-                })
-                .attr("x", function(d) {
-                    return xScale(d[0]);  // Returns scaled location of x
-                })
-                .attr("y", function(d) {
-                    return yScale(d[1]);  // Returns scaled circle y
-                })
-                .attr("font_family", "sans-serif")  // Font type
-                .attr("font-size", "11px")  // Font size
-                .attr("fill", "darkgreen");   // Font color
-              
-            
+    
+    chartGroup.append("g")
+        .attr("transform", 'translate(0, ${chartHeight})')
+        .call(bottomAxis);
+    
+    chartGroup.append("g")
+        .call(leftAxis);
 
-            // Define X axis and attach to graph
-            var xAxis = d3.axisBottom()  // Create an x axis
-                .scale(xScale)      // Scale x axis
-                
-                .ticks(10);  // Set rough # of ticks (optional)
+    /*
 
-            svg.append("g")     // Append a group element (itself invisible, but helps 'group' elements)
-                .attr("class", "axis")  // Assign the 'axis' CSS
-                .attr("transform", "translate(0," + (canvas_height - padding) + ")")  // Place axis at bottom
-                .call(xAxis);  // Call function to create axis
+    var circlesGroup = chartGroup.selectAll("circle")
+        .data(socialData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xScale(data.poverty))
+        .attr("cy", d => yScale(data.healthcare))
+        .attr("r", "pink")
+        .attr("fill", "pink")
+        .attr("opacity", ".5");
 
-            // Define Y axis and attach to graph
-            var yAxis = d3.axisLeft()  // Create a y axis
-                .scale(yScale)  // Scale y axis
-                
-                .ticks(5);  // Set rough # of ticks (optional)
+    var toolTip = d3.tip()
+        .attr("class", "tooltip")
+        .offset([80, -60])
+        .html(function(d) {
+            return ('${d.abbr}');
+        });
 
-            svg.append("g")
-                .attr("class", "axis")
-                .attr("transform", "translate(" + padding + ",0)")
-                .call(yAxis);
-                
-  })
+    chartGroup.call(toolTip);
+
+    //circlesGroup.on("click", function(data) {
+    //  toolTip.show(data, this);
+    //})
+
+      //.on("mouseout", function(data, index) {
+        //toolTip.hide(data);
+      //});
+    
+    chartGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - chartMargin.left + 40)
+      .attr("x", 0 - (chartHeight/2))
+      .attr("dy", "1em")
+      .attr("class", "axisText")
+      .text("Lacks Healthcare(%)");
+
+    chartGroup.append("text")
+    .attr("transform", `translate(${chartWidth / 2}, ${chartHeight + chartMargin.top + 30})`)
+    .attr("class", "axisText")
+    .text("In Poverty(%");
+  */
+  });
 });
