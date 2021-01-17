@@ -1,11 +1,12 @@
 .jumbotron {
-  padding: 10px;
+  padding: 0;
   font-size: 80px;
+  border: solid;
+  border: outset gray;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
-.p {
-  font-size: 30px;
-}
 
 .iframeContainer {
   padding: 20px;
