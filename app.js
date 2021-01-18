@@ -36,7 +36,7 @@ d3.csv("data.csv").then(function(socialData) {
     console.log(data.healthcare);
 
   var xScale = d3.scaleLinear()
-      .domain([0, 25])
+      .domain([5, 25])
       .range([0, chartWidth]) 
 
   var yScale = d3.scaleLinear()
@@ -63,15 +63,22 @@ d3.csv("data.csv").then(function(socialData) {
         .attr("cx", d => xScale(d.poverty))
         .attr("cy", d => yScale(d.healthcare))
         .attr("r", "10")
-        .attr("fill", "gray")
+        .attr("fill", "grey", state)
         .text(state)
         .text("white");
+
+  var texts = svg.selectAll(".myTexts")
+    .data(state)
+    .enter()
+    .append("text");
+    
+    texts.attr(function(d){return d.state});
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
         .offset([80, -60])
         .html(function(d) {
-            return (state);
+            return (d.state);
         });
 
     chartGroup.call(toolTip);
