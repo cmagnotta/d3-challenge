@@ -1,0 +1,22 @@
+let texts = chartGroup.selectAll(null)
+      .data(socialData)
+      .enter()
+      .append('text')
+      .text(d => d.abbr)
+      .attr("class", "stateText")
+
+      let ticked = () => {
+    
+        texts.attr('dx',  d => xScale(d.poverty))
+                
+            .attr('dy', d => yScale(d.healthcare))         
+    }
+    ticked()
+
+    chartGroup.append("g")
+    //.attr("transform", `translate(15, ${chartHeight + chartMargin.top + 30})`)
+    .call(bottomAxis);
+    
+  chartGroup.append("g")
+    //.attr("transform", `translate(${chartMargin.top}, ${chartMargin.left})`)
+    .call(leftAxis);

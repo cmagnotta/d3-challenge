@@ -4,7 +4,7 @@ var svgHeight = 660;
 
 var chartMargin = {
   top: 30,
-  right: 40,
+  right: 50,
   bottom: 80,
   left: 100
 };
@@ -19,8 +19,6 @@ var svg = d3.select("#scatter")
   .attr("height", svgHeight)
   .attr("width", svgWidth);
 
-// Append a group to the SVG area and shift ('translate') it to the right and down to adhere
-// to the margins set in the "chartMargin" object.
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
@@ -62,17 +60,25 @@ d3.csv("data.csv").then(function(socialData) {
         .append("circle")
         .attr("cx", d => xScale(d.poverty))
         .attr("cy", d => yScale(d.healthcare))
-        .attr("r", "10")
+        .attr("r", "8")
         .attr("fill", "grey", state)
         .text(state)
         .text("white");
 
-  var texts = svg.selectAll(".myTexts")
-    .data(state)
-    .enter()
-    .append("text");
-    
-    texts.attr(function(d){return d.state});
+      let texts = chartGroup.selectAll(null)
+        .data(socialData)
+        .enter()
+        .append('text')
+        .text(d => d.abbr)
+        .attr("class", "stateText")
+  
+        let ticked = () => {
+      
+          texts.attr('dx',  d => xScale(d.poverty))
+                  
+              .attr('dy', d => yScale(d.healthcare))         
+      }
+      ticked()
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
@@ -88,7 +94,7 @@ d3.csv("data.csv").then(function(socialData) {
 
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - chartMargin.left + 40)
+      .attr("y", 0 - chartMargin.left + 0)
       .attr("x", 0 - (chartHeight/2))
       .attr("dy", "1em")
       .attr("class", "axisText")

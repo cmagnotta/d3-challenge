@@ -28,6 +28,7 @@
   font-family: sans-serif;
   fill: #fff;
   text-anchor: middle;
+  font-size: 7px;
 }
 
 .stateCircle {
@@ -58,8 +59,8 @@
     display: none;
   }
 
-  .aText {
-    font-size: 14px;
+  .axisText {
+    font-size: 16px;
   }
 }
 
