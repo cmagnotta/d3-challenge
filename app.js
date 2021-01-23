@@ -79,6 +79,7 @@ d3.csv("data.csv").then(function(socialData) {
               .attr('dy', d => yScale(d.healthcare))         
       }
       ticked()
+    
 
     var toolTip = d3.tip()
         .attr("class", "tooltip")
